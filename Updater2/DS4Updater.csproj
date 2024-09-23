@@ -9,11 +9,13 @@
 
   <PropertyGroup>
     <Product>DS4Updater</Product>
-    <Copyright>Copyright © Jays2Kings 2014, 2015; Ryochan7 2017-2023</Copyright>
-    <Version>1.6.0</Version>
-    <AssemblyVersion>1.6.0</AssemblyVersion>
-    <FileVersion>1.6.0</FileVersion>
+    <Copyright>Copyright © Jays2Kings 2014, 2015; Ryochan7 2017-2023, Der_Googler 2024</Copyright>
+    <Version>1.7.0</Version>
+    <AssemblyVersion>1.7.0</AssemblyVersion>
+    <FileVersion>1.7.0</FileVersion>
     <StartupObject>DS4Updater.App</StartupObject>
+    <Company>Der_Googler</Company>
+    <Authors>Der_Googler</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
