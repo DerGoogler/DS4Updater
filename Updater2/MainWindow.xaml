@@ -1,16 +1,47 @@
 ﻿<Window x:Name="DS4_Updater" x:Class="DS4Updater.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DS4 Updater" Height="110" Width="408.566" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="DS4 Updater" Width="408.566" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" SizeToContent="Height">
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="0" ProgressState="Normal"/>
     </Window.TaskbarItemInfo>
-    <Grid>
-        <Button x:Name="btnOpenDS4" Content="Open DS4W" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="86" IsEnabled="False" Click="BtnOpenDS4_Click" Background="#FFF0F0F0"/>
-        <Button x:Name="btnChangelog" Content="View Changelog" HorizontalAlignment="Left" Margin="186,41,0,0" VerticalAlignment="Top" Width="99" Click="BtnChangelog_Click"/>
-        <ProgressBar x:Name="UpdaterBar" HorizontalAlignment="Left" Height="20" Margin="10,41,0,0" VerticalAlignment="Top" Width="171" Maximum="106"/>
-        <Label x:Name="label1" Content="Fetching Download" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label2" Content="time left" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="100" HorizontalContentAlignment="Right" Opacity="0"/>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <!-- Row for labels -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row for the progress bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row for buttons -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Labels -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Label x:Name="label1" Content="Fetching Download" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Label x:Name="label2" Content="time left" HorizontalAlignment="Right" Width="100" HorizontalContentAlignment="Right" VerticalAlignment="Center" Opacity="0"/>
+        </StackPanel>
+
+        <!-- ProgressBar -->
+        <ProgressBar x:Name="UpdaterBar" Grid.Row="1" HorizontalAlignment="Stretch" Height="20" VerticalAlignment="Top" Maximum="106" Margin="0,10,0,10"/>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <!-- Two columns: one for the Issues button and one for the other two buttons -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left-aligned button -->
+            <Button x:Name="btnIssues" Content="Issues" Width="85" HorizontalAlignment="Left" Click="BtnIssues_Click" Margin="0,0,10,0" Grid.Column="0"/>
+
+            <!-- Right-aligned buttons -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnChangelog" Content="View Changelog" Width="116" Click="BtnChangelog_Click" Margin="0,0,10,0"/>
+                <Button x:Name="btnOpenDS4" Content="Open DS4W" Width="86" IsEnabled="False" Click="BtnOpenDS4_Click" Background="#FFF0F0F0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

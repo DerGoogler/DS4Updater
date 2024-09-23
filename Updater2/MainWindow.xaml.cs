@@ -42,7 +42,7 @@ namespace DS4Updater
     {
         private const string CUSTOM_EXE_CONFIG_FILENAME = "custom_exe_name.txt";
         //WebClient wc = new WebClient(), subwc = new WebClient();
-        private HttpClient wc = new HttpClient();
+        private HttpClient wc = new();
         protected string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "DS4Windows");
         string exepath = AppContext.BaseDirectory;
@@ -654,15 +654,13 @@ namespace DS4Updater
                 try
                 {
                     bool success = false;
-                    using (var downloadStream = new FileStream(outputUpdatePath, FileMode.CreateNew))
+                    using var downloadStream = new FileStream(outputUpdatePath, FileMode.CreateNew);
+                    using HttpResponseMessage response = await wc.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    success = response.IsSuccessStatusCode;
+                    if (success)
                     {
-                        using HttpResponseMessage response = await wc.GetAsync(url);
-                        response.EnsureSuccessStatusCode();
-                        success = response.IsSuccessStatusCode;
-                        if (success)
-                        {
-                            await response.Content.CopyToAsync(downloadStream);
-                        }
+                        await response.Content.CopyToAsync(downloadStream);
                     }
                     //wc.DownloadFileAsync(url, outputUpdatePath);
                 }
@@ -682,9 +680,9 @@ namespace DS4Updater
             }
         }
 
-        private void BtnChangelog_Click(object sender, RoutedEventArgs e)
+        private static void OpenURL(string url)
         {
-            ProcessStartInfo startInfo = new("https://github.com/schmaldeo/DS4Windows/releases")
+            ProcessStartInfo startInfo = new(url)
             {
                 UseShellExecute = true
             };
@@ -693,6 +691,20 @@ namespace DS4Updater
                 using Process tempProc = Process.Start(startInfo);
             }
             catch { }
+        }
+
+
+        private void BtnChangelog_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the Changelog window
+            // ChangelogWindow changelogWindow = new("");
+            // changelogWindow.Show();
+            OpenURL("https://github.com/schmaldeo/DS4Windows/releases");
+        }
+
+        private void BtnIssues_Click(object sender, RoutedEventArgs e)
+        {
+            OpenURL("https://github.com/schmaldeo/DS4Windows/issues");
         }
 
         private void BtnOpenDS4_Click(object sender, RoutedEventArgs e)
