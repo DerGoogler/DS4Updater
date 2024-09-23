@@ -684,13 +684,13 @@ namespace DS4Updater
 
         private void BtnChangelog_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo("https://github.com/schmaldeo/DS4Windows/releases");
-            startInfo.UseShellExecute = true;
+            ProcessStartInfo startInfo = new("https://github.com/schmaldeo/DS4Windows/releases")
+            {
+                UseShellExecute = true
+            };
             try
             {
-                using (Process tempProc = Process.Start(startInfo))
-                {
-                }
+                using Process tempProc = Process.Start(startInfo);
             }
             catch { }
         }
