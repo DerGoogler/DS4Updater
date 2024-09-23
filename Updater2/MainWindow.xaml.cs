@@ -32,6 +32,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace DS4Updater
 {
@@ -218,42 +219,53 @@ namespace DS4Updater
                 //wc.DownloadProgressChanged += wc_DownloadProgressChanged;
             });
         }
+        public static string GetVersionValue(string xml)
+        {
+            var document = XDocument.Parse(xml);
+            var versionElement = document.Root
+                .Element("PropertyGroup")?
+                .Element("Version");
+            return versionElement?.Value;
+        }
 
         private void StartVersionFileDownload()
         {
-            Uri urlv = new("https://raw.githubusercontent.com/schmaldeo/DS4Windows/refs/heads/master/DS4Windows/newest.txt");
-            //Sorry other devs, gonna have to find your own server
+            Uri urlv = new("https://raw.githubusercontent.com/schmaldeo/DS4Windows/refs/heads/master/DS4Windows/DS4WinWPF.csproj");
             downloading = true;
 
-            label1.Content = "Getting Update info";
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                label1.Content = "Getting Update info";
+            });
+
             Task.Run(async () =>
             {
                 try
                 {
-                    bool success = false;
                     using HttpResponseMessage response = await wc.GetAsync(urlv);
                     response.EnsureSuccessStatusCode();
-                    success = response.IsSuccessStatusCode;
 
-                    if (success)
-                    {
-                        string verPath = Path.Combine(exepath, "version.txt");
-                        using (FileStream fs = new FileStream(verPath, FileMode.CreateNew))
-                        {
-                            await response.Content.CopyToAsync(fs);
-                        }
+                    string content = await response.Content.ReadAsStringAsync();
+                    string version = GetVersionValue(content); // Get version value
+                    string verPath = Path.Combine(exepath, "version.txt");
 
-                        subwc_DownloadFileCompleted();
-                    }
-                    else
+                    using (FileStream fs = new(verPath, FileMode.CreateNew))
+                    using (StreamWriter writer = new(fs))
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            label1.Content = "Could not download update";
-                        });
+                        await writer.WriteLineAsync(version);
                     }
-                    //subwc.DownloadFileAsync(urlv, exepath + "\\version.txt");
-                    //subwc.DownloadFileCompleted += subwc_DownloadFileCompleted;
+
+                    // Update the UI with success message on the UI thread
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        label1.Content = $"Version {version} downloaded successfully.";
+                    });
+
+                    // Call the completion method on the UI thread
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Subwc_DownloadFileCompleted();
+                    });
                 }
                 catch (HttpRequestException e)
                 {
@@ -263,10 +275,19 @@ namespace DS4Updater
                         label1.Content = "Could not download update";
                     });
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        label1.Content = "An error occurred while downloading update";
+                    });
+                }
             });
         }
 
-        private void subwc_DownloadFileCompleted()
+
+        private void Subwc_DownloadFileCompleted()
         {
             newversion = File.ReadAllText(Path.Combine(exepath,  "version.txt"));
             newversion = newversion.Trim();
