@@ -137,7 +137,7 @@ namespace DS4Updater
 
                 if (!downloading && version.Replace(',', '.').CompareTo(newversion) != 0)
                 {
-                    Uri url = new Uri($"https://github.com/Ryochan7/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
+                    Uri url = new($"https://github.com/schmaldeo/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
                     sw.Start();
                     outputUpdatePath = Path.Combine(updatesFolder, $"DS4Windows_{newversion}_{arch}.zip");
                     StartAppArchiveDownload(url, outputUpdatePath);
@@ -158,7 +158,7 @@ namespace DS4Updater
 
         private void StartAppArchiveDownload(Uri url, string outputUpdatePath)
         {
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 try
                 {
@@ -176,9 +176,9 @@ namespace DS4Updater
                             {
                                 await downloadStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
                                 totalBytesRead += bytesRead;
-                                Application.Current.Dispatcher.BeginInvoke(() =>
+                                _ = Application.Current.Dispatcher.BeginInvoke(() =>
                                 {
-                                    wc_DownloadProgressChanged(new CopyProgress(totalBytesRead, contentLen));
+                                    Wc_DownloadProgressChanged(new CopyProgress(totalBytesRead, contentLen));
                                 });
                             }
 
@@ -191,9 +191,9 @@ namespace DS4Updater
 
                     if (success)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        _ = Application.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            wc_DownloadFileCompleted();
+                            Wc_DownloadFileCompleted();
                         });
                     }
                     else
@@ -221,7 +221,7 @@ namespace DS4Updater
 
         private void StartVersionFileDownload()
         {
-            Uri urlv = new Uri("https://raw.githubusercontent.com/Ryochan7/DS4Windows/jay/DS4Windows/newest.txt");
+            Uri urlv = new("https://raw.githubusercontent.com/schmaldeo/DS4Windows/refs/heads/master/DS4Windows/newest.txt");
             //Sorry other devs, gonna have to find your own server
             downloading = true;
 
@@ -273,7 +273,7 @@ namespace DS4Updater
             File.Delete(Path.Combine(exepath, "version.txt"));
             if (version.Replace(',', '.').CompareTo(newversion) != 0)
             {
-                Uri url = new Uri($"https://github.com/Ryochan7/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
+                Uri url = new($"https://github.com/schmaldeo/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
                 sw.Start();
                 outputUpdatePath = Path.Combine(updatesFolder, $"DS4Windows_{newversion}_{arch}.zip");
 
@@ -299,9 +299,9 @@ namespace DS4Updater
                                 {
                                     await downloadStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
                                     totalBytesRead += bytesRead;
-                                    Application.Current.Dispatcher.BeginInvoke(() =>
+                                    _ = Application.Current.Dispatcher.BeginInvoke(() =>
                                     {
-                                        wc_DownloadProgressChanged(
+                                        Wc_DownloadProgressChanged(
                                             new CopyProgress(totalBytesRead, contentLen));
                                     });
                                 }
@@ -315,12 +315,12 @@ namespace DS4Updater
 
                         if (success)
                         {
-                            Application.Current.Dispatcher.BeginInvoke(() => { wc_DownloadFileCompleted(); });
+                            _ = Application.Current.Dispatcher.BeginInvoke(() => { Wc_DownloadFileCompleted(); });
                         }
                     }
                     catch (Exception ec)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(() => { label1.Content = ec.Message; });
+                        _ = Application.Current.Dispatcher.BeginInvoke(() => { label1.Content = ec.Message; });
                     }
                     //});
                 };
@@ -371,7 +371,7 @@ namespace DS4Updater
 
         Stopwatch sw = new Stopwatch();
 
-        private void wc_DownloadProgressChanged(CopyProgress e)
+        private void Wc_DownloadProgressChanged(CopyProgress e)
         {
             label2.Opacity = 1;
             double speed = e.BytesTransferred / sw.Elapsed.TotalSeconds;
@@ -397,7 +397,7 @@ namespace DS4Updater
         }
 
         //private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        private async void wc_DownloadFileCompleted()
+        private async void Wc_DownloadFileCompleted()
         {
             sw.Reset();
             string lang = CultureInfo.CurrentCulture.ToString();
@@ -635,7 +635,7 @@ namespace DS4Updater
                 {
                     label1.Content = "Launching DS4Windows soon";
                     btnOpenDS4.IsEnabled = false;
-                    Task.Delay(5000).ContinueWith((t) =>
+                    _ = Task.Delay(5000).ContinueWith((t) =>
                     {
                         PrepareAutoOpenDS4();
                     });
@@ -647,7 +647,7 @@ namespace DS4Updater
             }
             else if (!backup)
             {
-                Uri url = new Uri($"https://github.com/Ryochan7/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
+                Uri url = new($"https://github.com/schmaldeo/DS4Windows/releases/download/v{newversion}/DS4Windows_{newversion}_{arch}.zip");
 
                 sw.Start();
                 outputUpdatePath = Path.Combine(updatesFolder, $"DS4Windows_{newversion}_{arch}.zip");
@@ -684,7 +684,7 @@ namespace DS4Updater
 
         private void BtnChangelog_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo("https://docs.google.com/document/d/1CovpH08fbPSXrC6TmEprzgPwCe0tTjQ_HTFfDotpmxk/edit?usp=sharing");
+            ProcessStartInfo startInfo = new ProcessStartInfo("https://github.com/schmaldeo/DS4Windows/releases");
             startInfo.UseShellExecute = true;
             try
             {
